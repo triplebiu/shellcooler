@@ -1,0 +1,29 @@
+[package]
+name = "shellcooler"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+windows = { version = "0.48", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_System_Memory" ,
+    "Win32_System_Threading"
+]}
+openssl = { version = "0.10", features = ["vendored"] }
+# openssl = "0.10"
+
+[profile.release]
+strip = true        # 删除调试信息和符号表
+opt-level = 'z'     # 体积优化
+lto = true          # LTO（Link Time Optimization），意为链接时优化。可以消除大量冗余代码，减小二进制体积——代价是更长的链接时间
+codegen-units = 1   # 单线程生成执行文件
+panic = 'abort'     # panic时禁止栈回溯信息
+
+
+[build-dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
+# openssl = "0.10"
+rand = "0.8"
