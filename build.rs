@@ -1,8 +1,8 @@
 use openssl::symm::{encrypt, Cipher};
 use rand::Rng;
 
-// const RAW_SC: &str = "calc64.raw";     # 弹出计算器
-const RAW_SC: &str = "payload.bin";
+// const RAW_SC: &str = "calc64.raw";     // 弹出计算器
+const RAW_SC: &str = "https_x64_50143_stageless_indirect_xthread.bin";
 
 fn main() {
 

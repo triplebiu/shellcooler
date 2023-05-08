@@ -1,4 +1,4 @@
-# shellcoolerer
+# shellcooler
 a simple shellcode loader in rust
 
 ## 实现
@@ -18,12 +18,16 @@ a simple shellcode loader in rust
 
 - 将生成的shellcode文件在本项目根目录，修改`build.rs`文件中的`RAW_SC`值为shellcode文件路径。
 
-- 执行`cargo build --release`进行编译。
+- 执行`cargo build`进行编译。 如需生产dll，则执行`cargo build --lib`。
 
-- 生成的可执行文件在`target/release`目录下
+- 生成的可执行文件在`target/debug`目录下
 
 
 ## 进化日志
+
+- v0.1.1
+
+    可生成DLL。  (`cargo build --lib`)
 
 - v0.1.0
 
