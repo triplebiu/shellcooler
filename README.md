@@ -22,8 +22,14 @@ a simple shellcode loader in rust
 
 - 生成的可执行文件在`target/debug`目录下
 
+- 生成无黑窗口的exe: `cargo rustc --bin shellcooler -- -Clink-args="/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"`
 
 ## 进化日志
+
+- v0.1.2
+    生成无黑窗口的exe: `cargo rustc --bin shellcooler -- -Clink-args="/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"`
+    参考：https://stackoverflow.com/questions/29763647/how-to-make-a-program-that-does-not-display-the-console-window
+
 
 - v0.1.1
 
