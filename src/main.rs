@@ -1,7 +1,7 @@
-mod runcode;
+mod run_code;
 
 fn main() {
 
-    runcode::DLLMain();
+    run_code::DLLMain();
 
 }

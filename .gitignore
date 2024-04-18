@@ -2,3 +2,4 @@
 *.bin
 src/data_tmp.rs
 Cargo.lock
+.idea/

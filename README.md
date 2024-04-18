@@ -4,13 +4,12 @@ a simple shellcode loader in rust
 ## 实现
 通过windows-rs调用Windows API (Memory::VirtualAlloc, Threading::CreateThread)实现shellcode load。
 
-通过aes-256-cbc加密shellcode来显示静态免杀，目前采用的openssl，有点臃肿低效麻烦。
+通过对称加密shellcode来显示静态免杀。
 
 
 ## 使用说明
-- 需要在Windows上使用。
 
-- 安装rust、openssl、perl(不是很确定)，注意配置PATH和OPENSSL_DIR环境变量。
+安装rust编译环境，跨平台编译未测试。
 
 
 ## 操作步骤
@@ -18,7 +17,7 @@ a simple shellcode loader in rust
 
 - 将生成的shellcode文件在本项目根目录，修改`build.rs`文件中的`RAW_SC`值为shellcode文件路径。
 
-- 执行`cargo build`进行编译。 如需生产dll，则执行`cargo build --lib`。
+- 执行`cargo build`进行编译。
 
 - 生成的可执行文件在`target/debug`目录下
 
@@ -26,7 +25,12 @@ a simple shellcode loader in rust
 
 ## 进化日志
 
+- v0.1.3
+    
+    弃用openssl，改用aes-gcm-siv。 同步升级依赖库。
+
 - v0.1.2
+
     生成无黑窗口的exe: `cargo rustc --bin shellcooler -- -Clink-args="/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"`
     参考：https://stackoverflow.com/questions/29763647/how-to-make-a-program-that-does-not-display-the-console-window
 
