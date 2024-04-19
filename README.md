@@ -13,7 +13,7 @@ a simple shellcode loader in rust
 
 
 ## 操作步骤
-- 自行生成raw版shellcode （使用msfvenom、cobalt strike或其它）。 CS上，当前版本推荐使用stager载荷，效果相对更好。
+- 自行生成raw版shellcode （使用msfvenom、cobalt strike或其它）。
 
 - 将生成的shellcode文件在本项目根目录，修改`build.rs`文件中的`RAW_SC`值为shellcode文件路径。
 
@@ -21,7 +21,7 @@ a simple shellcode loader in rust
 
 - 生成的可执行文件在`target/debug`目录下
 
-- 生成无黑窗口的exe: `cargo rustc --bin shellcooler -- -Clink-args="/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"`
+- 生成无黑窗口的exe: `cargo rustc --bin shellcooler [--release] -- -Clink-args="/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"`
 
 ## 进化日志
 

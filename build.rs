@@ -5,7 +5,7 @@ use aes_gcm_siv::{aead::{Aead, KeyInit} ,Aes256GcmSiv, Key, Nonce};
 // msfvenom --platform windows -a x64 -p windows/x64/exec CMD=calc.exe -b '\x00\x0a\x0d\x20' -f raw -o calc_win_x64.raw
 // const RAW_SC: &str = "calc_win_x64.raw";     // 弹出计算器
 // const RAW_SC: &str = "https_x64_50143_stageless_indirect_xthread.bin";
-const RAW_SC: &str = "cs_payload_x64.bin";
+const RAW_SC: &str = "payload.bin";
 
 /// aes-gcm-siv 加密
 /// data - [u8]
